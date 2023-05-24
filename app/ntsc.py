@@ -337,7 +337,7 @@ class Ntsc:
         self._output_vhs_tape_speed = VHSSpeed.VHS_SP
 
         self._black_line_cut = False  # Add black line glitch (credits to @rgm89git)
-        self._black_line_width = 2
+        self._black_line_width = 1
 
     def rand(self) -> numpy.int32:
         return self.random.nextInt(_from=0)
@@ -654,8 +654,6 @@ class Ntsc:
 
         if self._black_line_cut:
             cut_black_line_border(src, self._black_line_width)
-        else:
-            undo_black_border(src)
 
         yiq = bgr2yiq(src)
         if self._color_bleed_before and (self._color_bleed_vert != 0 or self._color_bleed_horiz != 0):

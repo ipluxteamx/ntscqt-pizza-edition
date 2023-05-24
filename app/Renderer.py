@@ -254,9 +254,7 @@ class DefaultRenderer(AbstractRenderer):
 
             aud_ff_probe = ffmpeg.probe(orig_path)
 
-            #aud_ff_video_stream = next((stream for stream in aud_ff_probe['streams'] if stream['codec_type'] == 'video'), None)
-            #aud_ff_duration = aud_ff_video_stream['duration']
-            aud_ff_duration = aud_ff_probe["format"]["duration"]
+            aud_ff_duration = aud_ff_probe['streams'][0]['duration']
 
             aud_ff_audio_stream = next((stream for stream in aud_ff_probe['streams'] if stream['codec_type'] == 'audio'), None)
             aud_ff_srate = aud_ff_audio_stream['sample_rate']
@@ -264,14 +262,14 @@ class DefaultRenderer(AbstractRenderer):
 
             aud_ff_noise = ffmpeg.input(f'aevalsrc=-2+random(0):sample_rate={aud_ff_srate}:channel_layout=mono',f="lavfi",t=aud_ff_duration)
             aud_ff_noise = ffmpeg.filter((aud_ff_noise, aud_ff_noise), 'join', inputs=2, channel_layout='stereo')
-            aud_ff_noise = aud_ff_noise.filter('volume', self.audio_noise_volume)
+            aud_ff_noise = aud_ff_noise.filter('volume', 0.03)
 
-            aud_ff_fx = final_audio.filter("volume",self.audio_sat_beforevol).filter("alimiter",limit="0.5").filter("volume",0.8)
-            aud_ff_fx = aud_ff_fx.filter("firequalizer",gain=f'if(lt(f,{self.audio_lowpass}), 0, -INF)')
+            aud_ff_fx = final_audio.filter("volume",4.5).filter("alimiter",limit="0.5").filter("volume",0.8)
+            aud_ff_fx = aud_ff_fx.filter("firequalizer",gain='if(lt(f,10896), 0, -INF)')
 
-            aud_ff_mix = ffmpeg.filter([aud_ff_fx, aud_ff_noise], 'amix').filter("firequalizer",gain='if(lt(f,13301), 0, -INF)')
+            aud_ff_mix = ffmpeg.filter([aud_ff_fx, aud_ff_noise], 'amix')
 
-            aud_ff_command = aud_ff_mix.output(tmp_audio,acodec='pcm_s24le',shortest=None)
+            aud_ff_command = aud_ff_mix.output(tmp_audio,shortest=None)
 
             self.sendStatus.emit(f'[FFMPEG] Prepared audio filtering')
             logger.debug(aud_ff_command)
@@ -291,7 +289,7 @@ class DefaultRenderer(AbstractRenderer):
         # render_streams.append(temp_video_stream.video)
 
         if self.audio_process:
-            acodec = 'flac' if target_suffix == '.mkv' else 'copy'
+            acodec = 'aac' if target_suffix == '.mkv' else 'copy'
             ff_command = ffmpeg.output(temp_video_stream.video, final_audio, result_path, shortest=None, vcodec='copy', acodec=acodec)
         else:
             ff_command = ffmpeg.output(temp_video_stream.video, final_audio, result_path, shortest=None, vcodec='copy', acodec='copy')

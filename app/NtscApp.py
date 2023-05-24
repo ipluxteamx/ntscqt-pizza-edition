@@ -255,37 +255,13 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         except AttributeError:
             pass
 
-    # def audio_filtering(self):
-        # state = self.ProcessAudioCheckBox.isChecked()
-    #    state = False # Workaround
-    #    self.ProcessAudio = state
-    #    try:
-    #        self.videoRenderer.audio_process = state
-    #        logger.debug(f"Process audio: {str(state)}")
-    #    except AttributeError:
-    #        pass
-
     def audio_filtering(self):
-        state = False  # Update this variable based on your desired state
+        # state = self.ProcessAudioCheckBox.isChecked()
+        state = True # Workaround
         self.ProcessAudio = state
         try:
             self.videoRenderer.audio_process = state
             logger.debug(f"Process audio: {str(state)}")
-            
-            # Apply low-pass filter to the audio
-            if state:
-                audio_samples = self.videoRenderer.get_audio_samples()  # Get the audio samples
-                sample_rate = self.videoRenderer.get_audio_sample_rate()  # Get the sample rate
-                cutoff_frequency = 4000  # Set the cutoff frequency for the low-pass filter (adjust as needed)
-
-                # Design a low-pass filter
-                b, a = signal.butter(5, cutoff_frequency / (sample_rate / 2), btype='lowpass')
-
-                # Apply the filter to the audio samples
-                filtered_audio = signal.lfilter(b, a, audio_samples)
-
-                # Set the filtered audio back to the video renderer
-                self.videoRenderer.set_audio_samples(filtered_audio)
         except AttributeError:
             pass
 
