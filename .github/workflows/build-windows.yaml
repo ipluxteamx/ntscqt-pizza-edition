@@ -39,7 +39,10 @@ jobs:
         run: pyinstaller --onefile ntscQT.py
         
       - name: Directories
-        run: dir /s
+        run: dir /s > filenames.txt
+        
+      - name: Read from TXT
+        run: type filenames.txt
 
       # - name: Upload artifact
       #  uses: actions/upload-artifact@v3
