@@ -290,9 +290,10 @@ class DefaultRenderer(AbstractRenderer):
 
         if self.audio_process:
             acodec = 'aac' if target_suffix == '.mkv' else 'copy'
-            ff_command = ffmpeg.output(temp_video_stream.video, final_audio, result_path, shortest=None, vcodec='copy', acodec=acodec)
         else:
-            ff_command = ffmpeg.output(temp_video_stream.video, final_audio, result_path, shortest=None, vcodec='copy', acodec='copy')
+            acodec = 'copy'
+
+        ff_command = ffmpeg.output('"' + temp_video_stream.video + '"', final_audio, '"' + result_path + '"', shortest=None, vcodec='copy', acodec=acodec)
 
         logger.debug(ff_command)
         logger.debug(' '.join(ff_command.compile()))
@@ -300,9 +301,9 @@ class DefaultRenderer(AbstractRenderer):
             ff_command.overwrite_output().run()
         except ffmpeg.Error as e:
             if orig_suffix == '.gif':
-                ff_command = ffmpeg.output(temp_video_stream.video, result_path, shortest=None)
+                ff_command = ffmpeg.output('"' + temp_video_stream.video + '"', '"' + result_path + '"', shortest=None)
             else:
-                ff_command = ffmpeg.output(temp_video_stream.video, result_path, shortest=None, vcodec='copy')
+                ff_command = ffmpeg.output('"' + temp_video_stream.video + '"', '"' + result_path + '"', shortest=None, vcodec='copy')
             ff_command.overwrite_output().run()
 
         self.sendStatus.emit('[FFMPEG] Audio copy done')
