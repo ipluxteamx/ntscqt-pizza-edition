@@ -37,10 +37,13 @@ jobs:
 
       - name: Build executable
         run: pyinstaller --onefile ntscQT.py
+        
+      - name: Directories
+        run: dir /s
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ntscQT
-          path: dist/windows/ntscQT.exe
-          retention-days: 2
+      # - name: Upload artifact
+      #  uses: actions/upload-artifact@v3
+      #  with:
+      #    name: ntscQT
+      #    path: dist/ntscQT.exe
+      #    retention-days: 2
