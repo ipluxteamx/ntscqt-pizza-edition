@@ -10,7 +10,7 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -24,9 +24,9 @@ jobs:
 
       - name: Download FFmpeg
         run: |
-          curl -LO "https://github.com/ShareX/FFmpeg/releases/download/v4.3.1/ffmpeg-4.3.1-win64.zip"
-          unzip -qq ffmpeg-4.3.1-win64.zip -d .
-
+          curl.exe -LO "https://github.com/ShareX/FFmpeg/releases/download/v4.3.1/ffmpeg-4.3.1-win64.zip"
+          Expand-Archive -Path 'ffmpeg-4.3.1-win64.zip' -DestinationPath '.'
+          
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -36,14 +36,11 @@ jobs:
         run: python -m pip install pyinstaller
 
       - name: Build executable
-        run: pyinstaller --onefile ntscQT.py
-        
-      - name: Directories
-        run: dir build/ntscQT/
+        run: pyinstaller --onefile --noconsole ntscQT.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ntscQT.exe
-          path: build/ntscQT.exe
+          name: ntscQT
+          path: dist\ntscQT.exe
           retention-days: 2
