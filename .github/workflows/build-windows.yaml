@@ -39,7 +39,7 @@ jobs:
         run: pyinstaller --onefile ntscQT.py
         
       - name: Directories
-        run: dir build/
+        run: dir build/ntscQT/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
